@@ -62,7 +62,7 @@ def remember(user: str, input_text: str):
     # find which element of filtered_messages is the last one that is not empty
 
     personas = ['Drunk', 'Debate', 'Poet', 'Game', 'None']
-    # Last persona used in from_messages
+    
     persona_usage = [message for message in from_messages if message in personas]
     last_persona = persona_usage[-1] if len(persona_usage) > 0 else 'None'
     filtered_messages = [message for message in from_messages if message not in personas]
@@ -106,7 +106,7 @@ def think(input_text: str, user: str):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", 
         messages=message_log,   
-        max_tokens=50,         
+        max_tokens=100,         
         stop=None,              
         temperature=0.7,
     )
@@ -117,6 +117,16 @@ def think(input_text: str, user: str):
 
     # If no response with text is found, return the first response's content (which may be empty)
     return response.choices[0].message.content
+
+# Split text messages into chunks of 160 characters or 70 characters for unicode messages
+def split_message(message):
+    is_unicode = any(ord(c) > 127 for c in message)
+    if is_unicode:
+        chunk_size = 70
+    else:
+        chunk_size = 160
+    
+    return [message[i:i+chunk_size] for i in range(0, len(message), chunk_size)]
 
 def respond(event: func.EventGridEvent):
     event_json = event.get_json()
@@ -146,11 +156,14 @@ def respond(event: func.EventGridEvent):
     logging.info('Python EventGrid trigger preparing an sms response: From: %s, To: %s, Message: %s', 
                  from_phone_number, to_phone_number, reply_message)
 
-    sms_responses = sms_client.send(
+    split_messages = split_message(reply_message)
+    for message in split_messages:
+        sms_responses = sms_client.send(
         from_=from_phone_number,
         to= to_phone_number,
-        message=reply_message,
+        message=message,
         enable_delivery_report=True, # optional property
         tag="beta-test") # optional property
-    
-    logging.info('Python EventGrid trigger processed an sms error: %s', sms_responses.error_message)
+
+        if len(sms_responses.error_message ) > 0:
+            logging.info('Python EventGrid trigger processed an sms error: %s', sms_responses.error_message)
