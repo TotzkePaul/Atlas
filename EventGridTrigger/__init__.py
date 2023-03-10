@@ -27,7 +27,9 @@ def receive_from_servicebus(filter: str):
             
             messages = []
             for msg in received_msgs:
-                my_body = str(list(msg.body)[0]).decode('utf-8')
+                my_body = str(list(msg.body)[0])
+
+                my_body = my_body.decode('utf-8') if isinstance(my_body, bytes) else my_body
                 logging.info('Python ServiceBusClient has body: %s', my_body)
                 message = json.dumps(my_body)
                 logging.info('Python ServiceBusClient has message: %s', message)
