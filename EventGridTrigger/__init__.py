@@ -33,6 +33,7 @@ def respond(event: func.EventGridEvent):
 
     connection_str = f'endpoint={endpoint};accesskey={accesskey}'
         
+    logging.info('Python EventGrid to create SmsClient: %s', connection_str)
     sms_client = SmsClient.from_connection_string(connection_str)
 
     from_phone_number = event_json['to']
