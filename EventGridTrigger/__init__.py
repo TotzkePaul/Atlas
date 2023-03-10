@@ -27,7 +27,7 @@ def receive_from_servicebus(filter: str):
             
             messages = []
             for msg in received_msgs:
-                my_body = str(msg.body).decode('utf-8')
+                my_body = str(msg.body)
                 message = json.dumps(my_body)
                 text = message['data']['message']
                 if message['data']['to'] == filter and message['event_type'] == 'Microsoft.Communication.SMSReceived':
