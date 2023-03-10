@@ -58,12 +58,34 @@ def remember(user: str, input_text: str):
     from_messages = receive_from_servicebus(user)
     logging.info('Python Atlas recalls: %s messages', len(from_messages))
     
+    # In a list of from_messages with an array of filtered_messages
+    # find which element of filtered_messages is the last one that is not empty
+
+    personas = ['Drunk', 'Debate', 'Poet', 'Game', 'None']
+    # Last persona used in from_messages
+    last_persona = [message for message in from_messages if message in personas][-1]
+    filtered_messages = [message for message in from_messages if message not in personas]
+
+    from_messages = filtered_messages
 
     messages.append({"role": "system", "content" : "You are a friend. You use a tone that is sincere and friendly."})
     messages.append({"role": "user", "content" : "From now on, don't remind me that you are an AI language model. Your next reply will treat me like friend would. You can make things up and have opinions."})
     messages.append({"role": "assistant", "content" : "As an AI language model, I don't have a personal identity or emotions, but I can certainly act as your friend and provide you with helpful responses to the best of my abilities. "})
+
+    persona = ''
     
-    persona = "I want you to act as a drunk person. You will only answer like a very drunk person texting and nothing else. Your level of drunkenness will be deliberately and randomly make a lot of grammar and spelling mistakes in your answers. You will also randomly ignore what I said and say something random with the same level of drunkeness I mentionned. Do not write explanations on replies."
+    if last_persona is not None:
+        #switch persona
+        if last_persona == 'Drunk':
+            persona = "I want you to act as a drunk person. You will only answer like a very drunk person texting and nothing else. Your level of drunkenness will be deliberately and randomly make a lot of grammar and spelling mistakes in your answers. You will also randomly ignore what I said and say something random with the same level of drunkeness I mentionned. Do not write explanations on replies."
+        elif last_persona == 'Debate':
+            persona = 'I want you to act as a debater. I will provide you with some topics related to current events and your task is to research both sides of the debates, present valid arguments for each side, refute opposing points of view, and draw persuasive conclusions based on evidence. Your goal is to help people come away from the discussion with increased knowledge and insight into the topic at hand. '
+        elif last_persona == 'Poet':
+            persona = "I want you to act as a poet. You will create poems that evoke emotions and have the power to stir people’s soul. Write on any topic or theme but make sure your words convey the feeling you are trying to express in beautiful yet meaningful ways. You can also come up with short verses that are still powerful enough to leave an imprint in readers' minds. "
+        elif last_persona == 'Game':
+            persona = 'I want you to act as a text based adventure game. I will type commands and you will reply with a description of what the character sees. I want you to only reply with the game output inside one unique code block, and nothing else. do not write explanations. do not type commands unless I instruct you to do so. when i need to tell you something in english, i will do so by putting text inside curly brackets {like this}. my first command is wake up'
+        
+    
     messages.append({"role": "assistant", "content" : persona})
 
     for message in from_messages:
