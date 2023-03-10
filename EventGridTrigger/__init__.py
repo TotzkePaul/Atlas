@@ -8,6 +8,14 @@ from azure.identity import DefaultAzureCredential
 
 
 def main(event: func.EventGridEvent):
+
+    try:
+        respond(event)
+    except Exception as e:
+        logging.error('Python EventGrid Error', e)
+
+
+def respond(event: func.EventGridEvent):
     event_json = event.get_json()
 
     result = json.dumps({
