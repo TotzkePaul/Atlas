@@ -8,7 +8,6 @@ Traceback (most recent call last):
     message_log = remember(user)
   File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 52, in remember
     from_messages = receive_from_servicebus(user)
-  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 34, in receive_from_servicebus
-    data = message['data']
-TypeError: string indices must be integers
-
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 30, in receive_from_servicebus
+    my_body = str(list(msg.body)[0]).decode('utf-8')
+AttributeError: 'str' object has no attribute 'decode'
