@@ -29,8 +29,10 @@ def receive_from_servicebus(filter: str):
             for msg in received_msgs:
                 my_body = str(msg.body)
                 message = json.dumps(my_body)
-                text = message['data']['message']
-                if message['data']['to'] == filter and message['event_type'] == 'Microsoft.Communication.SMSReceived':
+                logging.info('Python ServiceBusClient has message: %s', message)
+                data = message['data']
+                text = data['message']
+                if data['to'] == filter and message['event_type'] == 'Microsoft.Communication.SMSReceived':
                     messages.append(text)
 
 
