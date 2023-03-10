@@ -106,7 +106,7 @@ def think(input_text: str, user: str):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", 
         messages=message_log,   
-        max_tokens=100,         
+        max_tokens=200,         
         stop=None,              
         temperature=0.7,
     )
@@ -164,6 +164,3 @@ def respond(event: func.EventGridEvent):
         message=message,
         enable_delivery_report=True, # optional property
         tag="beta-test") # optional property
-
-        if len(sms_responses.error_message ) > 0:
-            logging.info('Python EventGrid trigger processed an sms error: %s', sms_responses.error_message)
