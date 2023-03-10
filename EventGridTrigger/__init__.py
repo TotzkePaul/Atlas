@@ -35,7 +35,7 @@ def receive_from_servicebus(filter: str):
                 #logging.info('Python ServiceBusClient has decoded body: %s', my_body)
                 message = json.loads(my_body)
                 logging.info('Python ServiceBusClient has message: %s', message)
-                if message['event_type'] == 'Microsoft.Communication.SMSDeliveryReportReceived':
+                if message['eventType'] == 'Microsoft.Communication.SMSDeliveryReportReceived':
                     continue
                 data = message['data']
                 text = data['message']
