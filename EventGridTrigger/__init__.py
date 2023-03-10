@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from time import sleep
 
 import azure.functions as func
 from azure.communication.sms import SmsClient
@@ -106,7 +107,7 @@ def think(input_text: str, user: str):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", 
         messages=message_log,   
-        max_tokens=200,         
+        max_tokens=100,         
         stop=None,              
         temperature=0.7,
     )
@@ -158,6 +159,7 @@ def respond(event: func.EventGridEvent):
 
     split_messages = split_message(reply_message)
     for message in split_messages:
+        sleep(0.1)
         sms_responses = sms_client.send(
         from_=from_phone_number,
         to= to_phone_number,
