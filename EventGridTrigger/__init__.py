@@ -27,10 +27,10 @@ def receive_from_servicebus(filter: str):
             
             messages = []
             for msg in received_msgs:
-                my_body = msg.body.decode('utf-8')
+                my_body = str(msg.body).decode('utf-8')
                 message = json.dumps(my_body)
                 text = message['data']['message']
-                if message['data']['from'] == filter and message['event_type'] == 'Microsoft.Communication.SMSReceived':
+                if message['data']['to'] == filter and message['event_type'] == 'Microsoft.Communication.SMSReceived':
                     messages.append(text)
 
 
@@ -102,7 +102,7 @@ def respond(event: func.EventGridEvent):
     from_phone_number = event_json['to']
     to_phone_number = event_json['from']
 
-    reply_message = think( event_json['message'], from_phone_number)
+    reply_message = think( event_json['message'], to_phone_number)
 
     logging.info('Python EventGrid trigger preparing an sms response: From: %s, To: %s, Message: %s', 
                  from_phone_number, to_phone_number, reply_message)
