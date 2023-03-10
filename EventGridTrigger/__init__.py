@@ -6,6 +6,7 @@ import azure.functions as func
 from azure.communication.sms import SmsClient
 from azure.identity import DefaultAzureCredential
 
+import openai 
 
 def main(event: func.EventGridEvent):
     try:
@@ -13,6 +14,34 @@ def main(event: func.EventGridEvent):
     except Exception as e:
         logging.error('Error at %s', 'respond', exc_info=e)
 
+def remember(message: str):
+    messages = []
+
+    messages.append({"role": "system", "content" : "You are a friend."})
+    messages.append({"role": "assistant", "content" : "I want to understand you better."})
+    messages.append({"role": "user", "content" : message})
+    return messages
+
+def think(input_text: str):
+    logging.info('Python OpenAI is thinking about: %s', input_text)
+    openai.api_key = os.environ["OPENAI_API_KEY"]
+
+    message_log = remember(input_text)
+    
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo", 
+        messages=message_log,   
+        max_tokens=50,         
+        stop=None,              
+        temperature=0.7,
+    )
+    
+    for choice in response.choices:
+        if "text" in choice:
+            return choice.text
+
+    # If no response with text is found, return the first response's content (which may be empty)
+    return response.choices[0].message.content
 
 def respond(event: func.EventGridEvent):
     event_json = event.get_json()
@@ -26,20 +55,18 @@ def respond(event: func.EventGridEvent):
     })
 
     logging.info('Python EventGrid trigger processed an event: %s', result)
-    logging.info('Python EventGrid to create an additional log: %s', event.id)
 
     endpoint = 'https://atlassms.communication.azure.com/'
     accesskey = os.environ["SMS_ACCESS_KEY"]
 
     connection_str = f'endpoint={endpoint};accesskey={accesskey}'
-        
-    logging.info('Python EventGrid to create SmsClient: %s', connection_str)
+    
     sms_client = SmsClient.from_connection_string(connection_str)
 
     from_phone_number = event_json['to']
     to_phone_number = event_json['from']
 
-    reply_message = 'ECHO: ' + event_json['message']
+    reply_message = think( event_json['message'])
 
     logging.info('Python EventGrid trigger preparing an sms response: From: %s, To: %s, Message: %s', 
                  from_phone_number, to_phone_number, reply_message)
