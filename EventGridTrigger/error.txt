@@ -1,21 +1,13 @@
 Error at respond
 Traceback (most recent call last):
-  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 40, in main
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 41, in main
     respond(event)
-  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 104, in respond
-    reply_message = think( event_json['message'], from_phone_number)
-  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 64, in think
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 105, in respond
+    reply_message = think( event_json['message'], to_phone_number)
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 65, in think
     message_log = remember(user)
-  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 48, in remember
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 49, in remember
     from_messages = receive_from_servicebus(user)
   File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 30, in receive_from_servicebus
-    message = json.dumps(msg.body)
-  File "/usr/local/lib/python3.10/json/__init__.py", line 231, in dumps
-    return _default_encoder.encode(obj)
-  File "/usr/local/lib/python3.10/json/encoder.py", line 199, in encode
-    chunks = self.iterencode(o, _one_shot=True)
-  File "/usr/local/lib/python3.10/json/encoder.py", line 257, in iterencode
-    return _iterencode(o, 0)
-  File "/usr/local/lib/python3.10/json/encoder.py", line 179, in default
-    raise TypeError(f'Object of type {o.__class__.__name__} '
-TypeError: Object of type generator is not JSON serializable
+    my_body = str(msg.body).decode('utf-8')
+AttributeError: 'str' object has no attribute 'decode'
