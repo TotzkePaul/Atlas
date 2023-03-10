@@ -64,8 +64,7 @@ def remember(user: str, input_text: str):
     personas = ['Drunk', 'Debate', 'Poet', 'Game', 'None']
     # Last persona used in from_messages
     persona_usage = [message for message in from_messages if message in personas]
-    persona_usage = persona_usage[-1] if len(persona_usage) > 0 else 'None'
-    last_persona = [message for message in from_messages if message in personas][-1]
+    last_persona = persona_usage[-1] if len(persona_usage) > 0 else 'None'
     filtered_messages = [message for message in from_messages if message not in personas]
 
     from_messages = filtered_messages
