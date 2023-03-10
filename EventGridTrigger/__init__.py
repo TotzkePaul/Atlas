@@ -27,7 +27,8 @@ def receive_from_servicebus(filter: str):
             
             messages = []
             for msg in received_msgs:
-                my_body = str(msg.body)
+                my_body = str(list(msg.body)[0])
+                logging.info('Python ServiceBusClient has body: %s', my_body)
                 message = json.dumps(my_body)
                 logging.info('Python ServiceBusClient has message: %s', message)
                 data = message['data']
