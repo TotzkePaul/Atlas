@@ -8,11 +8,10 @@ from azure.identity import DefaultAzureCredential
 
 
 def main(event: func.EventGridEvent):
-
     try:
         respond(event)
     except Exception as e:
-        logging.error('Python EventGrid Error', e)
+        logging.error('Error at %s', 'respond', exc_info=e)
 
 
 def respond(event: func.EventGridEvent):
@@ -27,6 +26,7 @@ def respond(event: func.EventGridEvent):
     })
 
     logging.info('Python EventGrid trigger processed an event: %s', result)
+    logging.info('Python EventGrid to create an additional log: %s', event.id)
 
     endpoint = 'https://atlassms.communication.azure.com/'
     accesskey = os.environ["SMS_ACCESS_KEY"]
