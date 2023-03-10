@@ -1,19 +1,13 @@
 Error at respond
 Traceback (most recent call last):
-  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 46, in main
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 48, in main
     respond(event)
-  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 110, in respond
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 112, in respond
     reply_message = think( event_json['message'], to_phone_number)
-  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 70, in think
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 72, in think
     message_log = remember(user)
-  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 54, in remember
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 56, in remember
     from_messages = receive_from_servicebus(user)
   File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 34, in receive_from_servicebus
-    message = json.loads(my_body)
-  File "/usr/local/lib/python3.10/json/__init__.py", line 346, in loads
-    return _default_decoder.decode(s)
-  File "/usr/local/lib/python3.10/json/decoder.py", line 337, in decode
-    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-  File "/usr/local/lib/python3.10/json/decoder.py", line 355, in raw_decode
-    raise JSONDecodeError("Expecting value", s, err.value) from None
-json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+    my_body = my_body.decode('utf-8')
+AttributeError: 'str' object has no attribute 'decode'
