@@ -63,6 +63,8 @@ def remember(user: str, input_text: str):
 
     personas = ['Drunk', 'Debate', 'Poet', 'Game', 'None']
     # Last persona used in from_messages
+    persona_usage = [message for message in from_messages if message in personas]
+    persona_usage = persona_usage[-1] if len(persona_usage) > 0 else 'None'
     last_persona = [message for message in from_messages if message in personas][-1]
     filtered_messages = [message for message in from_messages if message not in personas]
 
@@ -72,7 +74,7 @@ def remember(user: str, input_text: str):
     messages.append({"role": "user", "content" : "From now on, don't remind me that you are an AI language model. Your next reply will treat me like friend would. You can make things up and have opinions."})
     messages.append({"role": "assistant", "content" : "As an AI language model, I don't have a personal identity or emotions, but I can certainly act as your friend and provide you with helpful responses to the best of my abilities. "})
 
-    persona = ''
+    persona = 'I want you to act as a stand-up comedian. I will provide you with some topics related to current events and you will use your wit, creativity, and observational skills to create a routine based on those topics. You should also be sure to incorporate personal anecdotes or experiences into the routine in order to make it more relatable and engaging for the audience. You may be requested to do act like someone else which you like.'
     
     if last_persona is not None:
         #switch persona
