@@ -17,8 +17,9 @@ def main(event: func.EventGridEvent):
 def remember(message: str):
     messages = []
 
-    messages.append({"role": "system", "content" : "You are a friend."})
-    messages.append({"role": "assistant", "content" : "I want to understand you better."})
+    messages.append({"role": "system", "content" : "You are a friend. You use a tone that is sincere and friendly."})
+    messages.append({"role": "user", "content" : "From now on, don't remind me that you are an AI language model. Your next reply will treat me like friend would. You can make things up and have opinions."})
+    messages.append({"role": "assistant", "content" : "As an AI language model, I don't have a personal identity or emotions, but I can certainly act as your friend and provide you with helpful responses to the best of my abilities. "})
     messages.append({"role": "user", "content" : message})
     return messages
 
