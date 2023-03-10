@@ -2,6 +2,15 @@ Error at respond
 Traceback (most recent call last):
   File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 48, in main
     respond(event)
-  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 124, in respond
-    logging.info('Python EventGrid trigger processed an sms response: %s', sms_responses.get_json())
-AttributeError: 'list' object has no attribute 'get_json'
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 119, in respond
+    reply_message = think( event_json['message'], to_phone_number)
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 79, in think
+    message_log = remember(user, input_text)
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 56, in remember
+    from_messages = receive_from_servicebus(user)
+  File "/home/site/wwwroot/EventGridTrigger/__init__.py", line 39, in receive_from_servicebus
+    text = data['message']
+KeyError: 'message'
+
+
+Python ServiceBusClient has message: 
