@@ -78,8 +78,8 @@ def remember(user: str, input_text: str):
     logging.info('Python Atlas recalls: %s messages', len(from_messages))
     
     
-    if input_text not in [message for message in messages]:
-        messages.append(input_text)
+    if input_text not in [message for message in from_messages]:
+        from_messages.append(input_text)
 
     personas = ['Drunk', 'Debate', 'Poet', 'Game', 'None']
     
