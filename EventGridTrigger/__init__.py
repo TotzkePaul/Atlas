@@ -20,7 +20,7 @@ def receive_from_servicebus(filter: str):
     logging.info('Python ServiceBusClient created ServiceBusClient')
 
     with servicebus_client:
-        receiver = servicebus_client.get_subscription_receiver(topic_name='texts', subscription_name='texts')
+        receiver = servicebus_client.get_subscription_receiver(topic_name='texts', subscription_name='reply')
         logging.info('Python ServiceBusClient created receiver')
         with receiver:
             received_msgs = receiver.receive_messages(max_message_count=100, max_wait_time=15)
@@ -60,7 +60,7 @@ def clear():
     logging.info('Python ServiceBusClient created ServiceBusClient')
 
     with servicebus_client:
-        receiver = servicebus_client.get_subscription_receiver(topic_name='texts', subscription_name='texts')
+        receiver = servicebus_client.get_subscription_receiver(topic_name='texts', subscription_name='reply')
         logging.info('Python ServiceBusClient created receiver')
         with receiver:
             received_msgs = receiver.receive_messages(max_message_count=100, max_wait_time=15)
