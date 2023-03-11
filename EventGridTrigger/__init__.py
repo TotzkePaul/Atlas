@@ -85,6 +85,7 @@ def remember(user: str, input_text: str):
     persona_usage = []
 
     for msg in from_messages:
+        logging.info('Python Atlas recalls msg: "%s"', msg)
         if msg in personas:
             persona_usage.append(msg)
     last_persona = persona_usage[-1] if len(persona_usage) > 0 else None
@@ -128,8 +129,8 @@ def think(input_text: str, user: str):
     if input_text == 'Clear':
         logging.info('Python clearing messages for: %s', user)
         clear()
-
-    message_log = remember(user, input_text)
+    else:
+        message_log = remember(user, input_text)
     
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", 
