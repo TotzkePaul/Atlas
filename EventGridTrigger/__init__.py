@@ -94,6 +94,7 @@ def remember(user: str, input_text: str):
 
     persona = 'I want you to act as a stand-up comedian. I will provide you with some topics related to current events and you will use your wit, creativity, and observational skills to create a routine based on those topics. You should also be sure to incorporate personal anecdotes or experiences into the routine in order to make it more relatable and engaging for the audience. You may be requested to do act like someone else which you like.'
     
+    logging.info('Python using persona: %s', last_persona)
     if last_persona is not None:
         #switch persona
         if last_persona == 'Drunk':
@@ -120,7 +121,8 @@ def think(input_text: str, user: str):
     logging.info('Python OpenAI is thinking about: %s', input_text)
     openai.api_key = os.environ["OPENAI_API_KEY"]
 
-    if input_text is 'Clear':
+    if input_text == 'Clear':
+        logging.info('Python clearing messages for: %s', user)
         clear()
 
     message_log = remember(user, input_text)
@@ -144,10 +146,13 @@ def think(input_text: str, user: str):
 def split_message(message):
     is_unicode = any(ord(c) > 127 for c in message)
     if is_unicode:
-        chunk_size = 66
+        chunk_size = 65
     else:
-        chunk_size = 156
+        chunk_size = 155
     
+    if len(message) < chunk_size +5:
+        return [message]
+
     chunks = [message[i:i+chunk_size] for i in range(0, len(message), chunk_size)]
     # prepend each chunk with the format "i/n: " where i is the chunk number and n is the total number of chunks
     for i in range(len(chunks)):
