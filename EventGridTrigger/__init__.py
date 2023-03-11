@@ -67,7 +67,7 @@ def clear():
             logging.info('Python receiver received %s messages', len(received_msgs))
             # complete the messages. messages isn't used. just to get the messages
             for msg in received_msgs:
-                msg.complete()
+                receiver.complete_message(msg)
             
 
 def remember(user: str, input_text: str):
