@@ -40,7 +40,7 @@ def receive_from_servicebus(filter: str):
                     continue
                 data = message['data']
                 text = data['message']
-                if data['from'] == filter and message['event_type'] == 'Microsoft.Communication.SMSReceived':
+                if data['from'] == filter and message['eventType'] == 'Microsoft.Communication.SMSReceived':
                     messages.append(text)
 
 
