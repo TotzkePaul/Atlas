@@ -82,7 +82,11 @@ def remember(user: str, input_text: str):
 
     personas = ['Drunk', 'Debate', 'Poet', 'Game', 'None']
     
-    persona_usage = [message for message in from_messages if message in personas]
+    persona_usage = []
+
+    for msg in from_messages:
+        if msg in personas:
+            persona_usage.append(msg)
     last_persona = persona_usage[-1] if len(persona_usage) > 0 else None
     filtered_messages = [message for message in from_messages if message not in personas]
 
@@ -94,7 +98,7 @@ def remember(user: str, input_text: str):
 
     persona = 'I want you to act as a stand-up comedian. I will provide you with some topics related to current events and you will use your wit, creativity, and observational skills to create a routine based on those topics. You should also be sure to incorporate personal anecdotes or experiences into the routine in order to make it more relatable and engaging for the audience. You may be requested to do act like someone else which you like.'
     
-    logging.info('Python using persona: %s', last_persona)
+    logging.info('Python using persona: %s of %s', last_persona, len(persona_usage))
     if last_persona is not None:
         #switch persona
         if last_persona == 'Drunk':
