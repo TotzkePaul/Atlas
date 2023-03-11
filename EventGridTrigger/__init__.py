@@ -52,6 +52,24 @@ def main(event: func.EventGridEvent):
     except Exception as e:
         logging.error('Error at %s', 'respond', exc_info=e)
 
+def clear():
+    CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+
+    logging.info('Python ServiceBusClient will create a ServiceBusClient')
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+    logging.info('Python ServiceBusClient created ServiceBusClient')
+
+    with servicebus_client:
+        receiver = servicebus_client.get_subscription_receiver(topic_name='texts', subscription_name='texts')
+        logging.info('Python ServiceBusClient created receiver')
+        with receiver:
+            received_msgs = receiver.receive_messages(max_message_count=100, max_wait_time=15)
+            logging.info('Python receiver received %s messages', len(received_msgs))
+            # complete the messages. messages isn't used. just to get the messages
+            for msg in received_msgs:
+                msg.complete()
+            
+
 def remember(user: str, input_text: str):
     messages = []
 
@@ -65,7 +83,7 @@ def remember(user: str, input_text: str):
     personas = ['Drunk', 'Debate', 'Poet', 'Game', 'None']
     
     persona_usage = [message for message in from_messages if message in personas]
-    last_persona = persona_usage[-1] if len(persona_usage) > 0 else 'None'
+    last_persona = persona_usage[-1] if len(persona_usage) > 0 else None
     filtered_messages = [message for message in from_messages if message not in personas]
 
     from_messages = filtered_messages
@@ -102,6 +120,9 @@ def think(input_text: str, user: str):
     logging.info('Python OpenAI is thinking about: %s', input_text)
     openai.api_key = os.environ["OPENAI_API_KEY"]
 
+    if input_text is 'Clear':
+        clear()
+
     message_log = remember(user, input_text)
     
     response = openai.ChatCompletion.create(
@@ -123,11 +144,17 @@ def think(input_text: str, user: str):
 def split_message(message):
     is_unicode = any(ord(c) > 127 for c in message)
     if is_unicode:
-        chunk_size = 70
+        chunk_size = 66
     else:
-        chunk_size = 160
+        chunk_size = 156
     
-    return [message[i:i+chunk_size] for i in range(0, len(message), chunk_size)]
+    chunks = [message[i:i+chunk_size] for i in range(0, len(message), chunk_size)]
+    # prepend each chunk with the format "i/n: " where i is the chunk number and n is the total number of chunks
+    for i in range(len(chunks)):
+        chunks[i] = f"{i+1}/{len(chunks)}: {chunks[i]}"
+        
+
+    return chunks
 
 def respond(event: func.EventGridEvent):
     event_json = event.get_json()
@@ -159,7 +186,7 @@ def respond(event: func.EventGridEvent):
 
     split_messages = split_message(reply_message)
     for message in split_messages:
-        sleep(0.1)
+        sleep(1)
         sms_responses = sms_client.send(
         from_=from_phone_number,
         to= to_phone_number,
