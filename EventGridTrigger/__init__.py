@@ -40,7 +40,7 @@ def receive_from_servicebus(filter: str):
                     continue
                 data = message['data']
                 text = data['message']
-                if data['to'] == filter and message['event_type'] == 'Microsoft.Communication.SMSReceived':
+                if data['from'] == filter and message['event_type'] == 'Microsoft.Communication.SMSReceived':
                     messages.append(text)
 
 
@@ -77,8 +77,9 @@ def remember(user: str, input_text: str):
     from_messages = receive_from_servicebus(user)
     logging.info('Python Atlas recalls: %s messages', len(from_messages))
     
-    # In a list of from_messages with an array of filtered_messages
-    # find which element of filtered_messages is the last one that is not empty
+    
+    if input_text not in [message for message in messages]:
+        messages.append(input_text)
 
     personas = ['Drunk', 'Debate', 'Poet', 'Game', 'None']
     
@@ -132,20 +133,20 @@ def think(input_text: str, user: str):
     else:
         message_log = remember(user, input_text)
     
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo", 
-        messages=message_log,   
-        max_tokens=100,         
-        stop=None,              
-        temperature=0.7,
-    )
-    
-    for choice in response.choices:
-        if "text" in choice:
-            return choice.text
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", 
+            messages=message_log,   
+            max_tokens=70,         
+            stop=None,              
+            temperature=0.7,
+        )
+        
+        for choice in response.choices:
+            if "text" in choice:
+                return choice.text
 
-    # If no response with text is found, return the first response's content (which may be empty)
-    return response.choices[0].message.content
+        # If no response with text is found, return the first response's content (which may be empty)
+        return response.choices[0].message.content
 
 # Split text messages into chunks of 160 characters or 70 characters for unicode messages
 def split_message(message):
